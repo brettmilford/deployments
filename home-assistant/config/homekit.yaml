@@ -1,0 +1,2 @@
+- name: HASS Bridge
+  advertise_ip: 192.168.10.64
