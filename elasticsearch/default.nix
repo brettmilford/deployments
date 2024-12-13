@@ -1,10 +1,9 @@
 { config, pkgs, lib, ... }:
 let
-  stackName = "home-assistant";
+  stackName = "elasticsearch";
 in
 {
-  networking.firewall.allowedTCPPorts = [1400 1443 21063 21064 21065];
-  networking.firewall.allowedUDPPorts = [5353 1900];
+  networking.firewall.allowedTCPPorts = [9200];
 
   systemd.services."podman-${stackName}" = {
     description = "Podman Compose Stack Service for ${stackName}";
@@ -22,7 +21,6 @@ in
 
     wantedBy = [ "multi-user.target" ];
   };
-
   services.nginx = {
     enable =  true;
     recommendedProxySettings = true;
@@ -33,12 +31,7 @@ in
     enableACME = true;
     forceSSL = true;
     locations."/" = {
-      proxyPass = "http://127.0.0.1:8123/";
-      extraConfig = ''
-        proxy_set_header    Upgrade     $http_upgrade;
-        proxy_set_header    Connection  "upgrade";
-      '';
+      proxyPass = "http://127.0.0.1:5601/";
     };
   };
-
 }

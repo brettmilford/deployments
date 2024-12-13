@@ -9,3 +9,24 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    environment:
+      - TZ=Australia/Brisane
+    volumes:
+      - /run/udev:/run/udev:ro
+      - ./zigbee2mqtt-app-data:/app/data
+  eclipse-mosquitto:
+    image: eclipse-mosquitto
+    container_name: eclipse-mosquitto 
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    ports:
+      - 1883:1883
+      - 9001:9001

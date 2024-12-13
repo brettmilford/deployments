@@ -1,14 +1,14 @@
 ---
 services:
-  unifi-network-application:
+  unifi:
     image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-application
+    container_name: unifi
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
       - MONGO_USER=unifi
-      - MONGO_PASS=WJar<^UeDDebA?7g3b0zHs^!W1yXcsF!
+      - MONGO_PASS=${MONGO_PASS}
       - MONGO_HOST=unifi-db
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi
@@ -23,7 +23,7 @@ services:
       - 3478:3478/udp
       - 10001:10001/udp
       - 8080:8080
-      - 1900:1900/udp #optional
+      - 1900:1900/udp #optional, also grabbed by ha
       - 8843:8843 #optional
       - 8880:8880 #optional
       - 6789:6789 #optional
