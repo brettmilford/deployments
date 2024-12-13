@@ -11,9 +11,10 @@ in
     after = [ "network-online.target" ];
 
     serviceConfig = {
+      Environment = "PATH=${pkgs.podman}/bin:${pkgs.podman-compose}/bin:/run/wrappers/bin:/usr/bin:/bin";
       Type = "simple";
-      ExecStart = "${pkgs.podman}/bin/podman-compose -f ${stackPath} up";
-      ExecStop = "${pkgs.podman}/bin/podman-compose -f /etc/nixos/deployments/${stackName}/compose.yaml down";
+      ExecStart = "${pkgs.podman-compose}/bin/podman-compose -f /etc/nixos/deployments/${stackName}/compose.yaml up";
+      ExecStop = "${pkgs.podman-compose}/bin/podman-compose -f /etc/nixos/deployments/${stackName}/compose.yaml down";
       Restart = "always";
       User = "root";
       WorkingDirectory = "/etc/nixos/deployments/${stackName}";
