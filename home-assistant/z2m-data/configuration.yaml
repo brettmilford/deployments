@@ -1,0 +1,29 @@
+homeassistant: true
+frontend:
+  port: 8081
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mqtt
+availability: true
+serial:
+  port: /dev/ttyUSB0
+  baudrate: 115200
+  adapter: ezsp
+  ezspVersion: 8
+advanced:
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+device_options:
+  legacy: false
+devices:
+  '0x70c59cfffee75325':
+    friendly_name: Dryer
+  '0xd44867fffed4e6f8':
+    friendly_name: Front Gate
+  '0xd44867fffeb3d18e':
+    friendly_name: Garrage Roller Door
+  '0xd44867fffed44f3f':
+    friendly_name: Side Gate
+  '0x70c59cfffef078f3':
+    friendly_name: Pool Pump 2

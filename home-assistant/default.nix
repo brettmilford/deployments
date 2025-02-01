@@ -41,5 +41,17 @@ in
       '';
     };
   };
+  services.nginx.virtualHosts."${stackName}-z2m.internal"= {
+    enableACME = true;
+    forceSSL = true;
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:8081/";
+      extraConfig = ''
+        proxy_set_header    Upgrade     $http_upgrade;
+        proxy_set_header    Connection  "upgrade";
+      '';
+    };
+  };
+
 
 }
