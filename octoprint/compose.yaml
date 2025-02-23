@@ -1,0 +1,14 @@
+version: '2.4'
+
+services:
+  octoprint:
+    image: octoprint/octoprint
+    ports:
+      - 8082:80
+    devices:
+    - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/ttyUSB0
+    - /dev/video0:/dev/video0
+    volumes:
+     - './data:/octoprint'
+    environment:
+      - ENABLE_MJPG_STREAMER=true
