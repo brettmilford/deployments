@@ -1,38 +1,45 @@
 { config, pkgs, lib, ... }:
+
+with lib;
+
 let
   stackName = "elasticsearch";
+  cfg = config.services.deployments;
 in
 {
-  networking.firewall.allowedTCPPorts = [9200];
+  config = mkIf cfg.elasticsearch.enable {
+    networking.firewall.allowedTCPPorts = [9200];
 
-  systemd.services."podman-${stackName}" = {
-    description = "Podman Compose Stack Service for ${stackName}";
-    wants = [ "network-online.target" ];
-    after = [ "network-online.target" ];
+    systemd.services."podman-${stackName}" = {
+      description = "Podman Compose Stack Service for ${stackName}";
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
 
-    serviceConfig = {
-      Environment = "PATH=${pkgs.podman}/bin:${pkgs.podman-compose}/bin:/run/wrappers/bin:/usr/bin:/bin";
-      Type = "simple";
-      ExecStart = "${pkgs.podman-compose}/bin/podman-compose -f /etc/nixos/deployments/${stackName}/compose.yaml up";
-      ExecStop = "${pkgs.podman-compose}/bin/podman-compose -f /etc/nixos/deployments/${stackName}/compose.yaml down";
-      Restart = "always";
-      User = "root";
-      WorkingDirectory = "/etc/nixos/deployments/${stackName}";
+      serviceConfig = {
+        Environment = "PATH=${pkgs.podman}/bin:${pkgs.podman-compose}/bin:/run/wrappers/bin:/usr/bin:/bin";
+        Type = "simple";
+        ExecStart = "${pkgs.podman-compose}/bin/podman-compose -f ${cfg.dataDir}/${stackName}/compose.yaml up";
+        ExecStop = "${pkgs.podman-compose}/bin/podman-compose -f ${cfg.dataDir}/${stackName}/compose.yaml down";
+        Restart = "always";
+        User = "root";
+        WorkingDirectory = "${cfg.dataDir}/${stackName}";
+      };
+
+      wantedBy = [ "multi-user.target" ];
     };
 
-    wantedBy = [ "multi-user.target" ];
-  };
-  services.nginx = {
-    enable =  true;
-    recommendedProxySettings = true;
-    recommendedTlsSettings = true;
-  };
+    # Only enable nginx if it's already enabled in the system
+    services.nginx = mkIf config.services.nginx.enable {
+      recommendedProxySettings = true;
+      recommendedTlsSettings = true;
 
-  services.nginx.virtualHosts."${stackName}.internal"= {
-    enableACME = true;
-    forceSSL = true;
-    locations."/" = {
-      proxyPass = "http://127.0.0.1:5601/";
+      virtualHosts."${stackName}.internal"= {
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:5601/";
+        };
+      };
     };
   };
 }
