@@ -24,8 +24,8 @@ in
   };
   services.nginx = {
     enable =  true;
-    recommendedProxySettings = true;
     recommendedTlsSettings = true;
+    recommendedProxySettings = true;
   };
 
   services.nginx.virtualHosts."${stackName}.internal"= {

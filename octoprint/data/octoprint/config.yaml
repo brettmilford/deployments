@@ -16,6 +16,8 @@ plugins:
         read_until: 1739889000
   classicwebcam:
     _config_version: 1
+    snapshot: http://octprint/?action=snapshot
+    stream: /webcam/?action=stream
   discovery:
     upnpUuid: e16b77d1-2311-4feb-84b3-f4a439471702
   errortracking:
@@ -31,6 +33,8 @@ plugins:
     _config_version: 1
 printerProfiles:
   default: _default
+serial:
+  autoconnect: true
 server:
   firstRun: false
   onlineCheck:
@@ -55,3 +59,5 @@ temperature:
     chamber: null
     extruder: 180
     name: PLA
+webcam:
+  ffmpeg: /usr/bin/ffmpeg
