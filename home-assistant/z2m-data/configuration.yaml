@@ -27,3 +27,9 @@ devices:
     friendly_name: Side Gate
   '0x70c59cfffef078f3':
     friendly_name: Pool Pump 2
+  '0x28dba7fffe553ce3':
+    friendly_name: '0x28dba7fffe553ce3'
+  '0x54ef441000e7a303':
+    friendly_name: '0x54ef441000e7a303'
+  '0x54ef441000e79820':
+    friendly_name: '0x54ef441000e79820'

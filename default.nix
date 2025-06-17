@@ -4,27 +4,29 @@ with lib;
 
 let
   cfg = config.services.deployments;
+  anyServiceEnabled = lib.any (service: service.enable) [
+    cfg.elasticsearch
+    cfg.homeAssistant
+    cfg.llamaCpp
+    cfg.octoprint
+    cfg.unifi
+  ];
 in
 {
-  options.services.deployments = {
-    enable = mkEnableOption "Enable container-based service deployments";
+  # Import individual deployment modules based on configuration
+  imports = [
+    ./elasticsearch
+    ./home-assistant
+    ./llama.cpp
+    ./octoprint
+    ./unifi
+  ];
 
+  options.services.deployments = {
     dataDir = mkOption {
       type = types.str;
       default = "/etc/nixos/deployments";
       description = "Directory where deployment configurations are stored";
-    };
-
-    containerDataDir = mkOption {
-      type = types.str;
-      default = "/var/lib/containers";
-      description = "Directory where container data is stored";
-    };
-
-    enableNginxProxy = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Whether to enable Nginx as a reverse proxy for services";
     };
 
     baseDomain = mkOption {
@@ -54,40 +56,30 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
-    # Import individual deployment modules based on configuration
-    imports = [
-      (mkIf cfg.elasticsearch.enable ./elasticsearch)
-      (mkIf cfg.homeAssistant.enable ./home-assistant)
-      (mkIf cfg.llamaCpp.enable ./llama.cpp)
-      (mkIf cfg.octoprint.enable ./octoprint)
-      (mkIf cfg.unifi.enable ./unifi)
-    ];
-
-    # Common settings for all deployments
+  config = mkIf anyServiceEnabled {
     environment.systemPackages = with pkgs; [
       podman
       podman-compose
     ];
 
-    # Enable podman socket and service
     virtualisation.podman = {
       enable = true;
-      dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
+    # BUG: nixos/nixpkgs#226365
+    networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 ];
+    virtualisation.oci-containers.backend = "podman";
 
-    # Enable nginx if proxy is enabled
-    services.nginx = mkIf cfg.enableNginxProxy {
+    services.nginx = {
       enable = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
     };
 
-    # Ensure container data persists across rebuilds
-    system.activationScripts.createContainerPaths = ''
-      mkdir -p ${cfg.containerDataDir}
-      mkdir -p ${cfg.dataDir}
-    '';
+    security.acme = {
+      acceptTerms = true;
+      defaults.email = "admin+acme@example.org";
+    };
+    networking.firewall.allowedTCPPorts = [80 443];
   };
 }

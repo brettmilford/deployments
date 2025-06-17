@@ -29,7 +29,6 @@ In your NixOS configuration, enable the deployment module and specify which serv
     
     # Optional: Override defaults
     dataDir = "/path/to/deployments";  # Default: /etc/nixos/deployments
-    containerDataDir = "/path/to/container/data";  # Default: /var/lib/containers
     enableNginxProxy = true;  # Whether to enable Nginx reverse proxy
     baseDomain = "internal";  # Base domain for service URLs
     
