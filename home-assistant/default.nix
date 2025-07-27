@@ -73,7 +73,7 @@ in
       serverAliases = [ "home-assistant.cirriform.au" ];
       sslCertificate = config.age.secrets."cf_origin_cert".path;
       sslCertificateKey = config.age.secrets."cf_origin_key".path;
-      forceSSL = true; # NOTE: without this a https server block doesn't get produced
+      addSSL = true;
       locations."/" = {
         proxyPass = "http://127.0.0.1:8123/";
         extraConfig = ''
