@@ -36,7 +36,7 @@ in
 
       virtualHosts."${stackName}.internal"= {
         enableACME = true;
-        forceSSL = true;
+        addSSL = true;
         locations."/" = {
           proxyPass = "https://127.0.0.1:8443/";
           proxyWebsockets = true;

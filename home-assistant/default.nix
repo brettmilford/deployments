@@ -47,8 +47,6 @@ in
 
     age.secrets.cfdCredentialsFile = {
       file = ../../secrets/cfd_tunnel_config.json.age;
-      owner = "cloudflared";
-      group = "cloudflared";
     };
 
     services.cloudflared = {
