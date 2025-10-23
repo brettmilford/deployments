@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
@@ -8,8 +13,17 @@ let
 in
 {
   config = mkIf cfg.homeAssistant.enable {
-    networking.firewall.allowedTCPPorts = [1400 1443 21063 21064 21065];
-    networking.firewall.allowedUDPPorts = [5353 1900];
+    networking.firewall.allowedTCPPorts = [
+      1400
+      1443
+      21063
+      21064
+      21065
+    ];
+    networking.firewall.allowedUDPPorts = [
+      5353
+      1900
+    ];
 
     systemd.services."podman-${stackName}" = {
       description = "Podman Compose Stack Service for ${stackName}";
@@ -67,7 +81,7 @@ in
       };
     };
 
-    services.nginx.virtualHosts."${stackName}.internal"= {
+    services.nginx.virtualHosts."${stackName}.internal" = {
       serverAliases = [ "home-assistant.cirriform.au" ];
       sslCertificate = config.age.secrets."cf_origin_cert".path;
       sslCertificateKey = config.age.secrets."cf_origin_key".path;
@@ -81,9 +95,11 @@ in
       };
     };
 
-    services.nginx.virtualHosts."${stackName}-z2m.internal"= {
-      enableACME = true;
-      forceSSL = true;
+    services.nginx.virtualHosts."${stackName}-z2m.internal" = {
+      serverAliases = [ "home-assistant-z2m.cirriform.au" ];
+      sslCertificate = config.age.secrets."cf_origin_cert".path;
+      sslCertificateKey = config.age.secrets."cf_origin_key".path;
+      addSSL = true;
       locations."/" = {
         proxyPass = "http://127.0.0.1:8081/";
         extraConfig = ''

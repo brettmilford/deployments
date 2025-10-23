@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
@@ -8,8 +13,11 @@ let
 in
 {
   config = mkIf cfg.unifi.enable {
-    networking.firewall.allowedTCPPorts = [8080];
-    networking.firewall.allowedUDPPorts = [3478 10001];
+    networking.firewall.allowedTCPPorts = [ 8080 ];
+    networking.firewall.allowedUDPPorts = [
+      3478
+      10001
+    ];
 
     systemd.services."podman-${stackName}" = {
       description = "Podman Compose Stack Service for ${stackName}";
@@ -28,14 +36,16 @@ in
 
       wantedBy = [ "multi-user.target" ];
     };
-    
+
     # Only enable nginx if it's already enabled in the system
     services.nginx = mkIf config.services.nginx.enable {
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
 
-      virtualHosts."${stackName}.internal"= {
-        enableACME = true;
+      virtualHosts."${stackName}.internal" = {
+        serverAliases = [ "unifi.cirriform.au" ];
+        sslCertificate = config.age.secrets."cf_origin_cert".path;
+        sslCertificateKey = config.age.secrets."cf_origin_key".path;
         addSSL = true;
         locations."/" = {
           proxyPass = "https://127.0.0.1:8443/";
