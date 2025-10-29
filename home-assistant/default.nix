@@ -82,6 +82,7 @@ in
     };
 
     services.nginx.virtualHosts."${stackName}.internal" = {
+      enableACME = false;
       serverAliases = [ "home-assistant.cirriform.au" ];
       sslCertificate = config.age.secrets."cf_origin_cert".path;
       sslCertificateKey = config.age.secrets."cf_origin_key".path;
@@ -96,6 +97,7 @@ in
     };
 
     services.nginx.virtualHosts."${stackName}-z2m.internal" = {
+      enableACME = false;
       serverAliases = [ "home-assistant-z2m.cirriform.au" ];
       sslCertificate = config.age.secrets."cf_origin_cert".path;
       sslCertificateKey = config.age.secrets."cf_origin_key".path;

@@ -70,16 +70,6 @@ in
     networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 ];
     virtualisation.oci-containers.backend = "podman";
 
-    services.nginx = {
-      enable = true;
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-    };
-
-    security.acme = {
-      acceptTerms = true;
-      defaults.email = "admin+acme@example.org";
-    };
     networking.firewall.allowedTCPPorts = [80 443];
   };
 }

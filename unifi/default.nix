@@ -39,10 +39,8 @@ in
 
     # Only enable nginx if it's already enabled in the system
     services.nginx = mkIf config.services.nginx.enable {
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-
       virtualHosts."${stackName}.internal" = {
+        enableACME = false;
         serverAliases = [ "unifi.cirriform.au" ];
         sslCertificate = config.age.secrets."cf_origin_cert".path;
         sslCertificateKey = config.age.secrets."cf_origin_key".path;
