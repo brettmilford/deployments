@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -70,6 +75,23 @@ in
     networking.firewall.interfaces."podman+".allowedUDPPorts = [ 53 ];
     virtualisation.oci-containers.backend = "podman";
 
-    networking.firewall.allowedTCPPorts = [80 443];
+    networking.firewall.allowedTCPPorts = [
+      80
+      443
+    ];
+
+    age.secrets."cf_origin_cert" = {
+      file = ../secrets/cf_origin_cert.pem.age;
+      mode = "770";
+      owner = "nginx";
+      group = "nginx";
+    };
+
+    age.secrets."cf_origin_key" = {
+      file = ../secrets/cf_origin_key.pem.age;
+      mode = "770";
+      owner = "nginx";
+      group = "nginx";
+    };
   };
 }

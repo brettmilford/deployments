@@ -43,20 +43,6 @@ in
       wantedBy = [ "multi-user.target" ];
     };
 
-    age.secrets."cf_origin_cert" = {
-      file = ../../secrets/cf_origin_cert.pem.age;
-      mode = "770";
-      owner = "nginx";
-      group = "nginx";
-    };
-
-    age.secrets."cf_origin_key" = {
-      file = ../../secrets/cf_origin_key.pem.age;
-      mode = "770";
-      owner = "nginx";
-      group = "nginx";
-    };
-
     environment.systemPackages = [ pkgs.cloudflared ];
 
     age.secrets.cfdCredentialsFile = {
